@@ -1,12 +1,12 @@
 ---
 # tasks file for cbkc-ansible-role-docker
-- name: Configure global proxy settings
-  template:
-    src: /proxy.sh.j2
-    dest: /etc/profile.d/proxy.sh
-    owner: bin
-    group: wheel
-    mode: '0644'
+# - name: Configure global proxy settings
+#   template:
+#     src: proxy.sh.j2
+#     dest: /etc/profile.d/proxy.sh
+#     owner: bin
+#     group: wheel
+#     mode: '0644'
 
 - name: Add docker-ce repo
   shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -26,6 +26,15 @@
     name: docker-ce
     state: latest
 
+- name: Configure docker default registry
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+
 - name: Enable Docker service
   shell: systemctl enable docker.service
+  become: true
+
+- name: Restart Docker service
+  shell: systemctl restart docker.service
   become: true

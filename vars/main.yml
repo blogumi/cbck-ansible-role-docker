@@ -2,3 +2,4 @@
 # vars file for cbkc-ansible-role-docker
 proxyHost: google.com
 proxyPort: 8080
+internalDockerRegistry: google.com

@@ -1,12 +1,24 @@
 ---
 # tasks file for cbkc-ansible-role-docker
-# - name: Configure global proxy settings
-#   template:
-#     src: proxy.sh.j2
-#     dest: /etc/profile.d/proxy.sh
-#     owner: bin
-#     group: wheel
-#     mode: '0644'
+- name: CFS Configure global proxy settings
+  template:
+    src: cfs_proxy.sh.j2
+    dest: /etc/profile.d/proxy.sh
+    owner: bin
+    group: wheel
+    mode: '0644'
+  when:
+      - cloudEnv == "CFS"
+
+- name: TSD Configure global proxy settings
+  template:
+    src: tsd_proxy.sh.j2
+    dest: /etc/profile.d/proxy.sh
+    owner: bin
+    group: wheel
+    mode: '0644'
+  when:
+      - cloudEnv == "TSD"
 
 - name: Add docker-ce repo
   shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
@@ -28,8 +40,25 @@
 
 - name: Configure docker default registry
   template:
-    src: daemon.json.j2
+    src: cfs_daemon.json.j2
     dest: /etc/docker/daemon.json
+  when:
+    - cloudEnv == "CFS"
+
+- name: Configure docker default registry
+  template:
+    src: tsd_daemon.json.j2
+    dest: /etc/docker/daemon.json
+  when:
+    - cloudEnv == "TSD"
+
+- name: Trust internal certificates
+  shell: "openssl s_client -servername {{ internalDockerRegistry }} -connect {{ internalDockerRegistry }} </dev/null | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' >/tmp/{{ internalDockerRegistry }}.pem "
+
+- name: Copy docker registry cert to docker trusted cert location
+  copy:
+    src: "/tmp/{{ internalDockerRegistry }}.pem"
+    dest: /etc/docker/certs.d/"{{ internalDockerRegistry }}"/ca.crt
 
 - name: Enable Docker service
   shell: systemctl enable docker.service

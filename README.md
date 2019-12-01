@@ -36,17 +36,16 @@ passed in as parameters) is always nice for users too:
 
 Additional Notes
 ------------------
+pip3 install --upgrade --user setuptools
+pip3 install --user molecule
+pip3 install python-gilt
 pip3 install 'molecule[docker]'
 molecule create
 molecule converge
 molecule login
 molecule destroy
 molecule test
-
-License
--------
-
-BSD
+gilt overlay
 
 Author Information
 ------------------

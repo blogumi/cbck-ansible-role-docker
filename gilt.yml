@@ -1,0 +1,4 @@
+# Just an example
+# - git: https://github.com/some-ansible-role.git
+#     version: master
+#     dst: roles/some-ansible-role/

@@ -2,3 +2,4 @@
 # vars file for cbkc-ansible-role-docker
 # Options for cloudEnv ["TSD", "CFS"]
 cloudEnv: localhost
+internalDockerRegistry: google.com

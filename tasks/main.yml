@@ -1,0 +1,31 @@
+---
+# tasks file for cbkc-ansible-role-docker
+- name: Configure global proxy settings
+  template:
+    src: /proxy.sh.j2
+    dest: /etc/profile.d/proxy.sh
+    owner: bin
+    group: wheel
+    mode: '0644'
+
+- name: Add docker-ce repo
+  shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  become: true
+
+- name: Install reqs for Docker
+  yum:
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: Install the latest version of docker-ce
+  yum:
+    name: docker-ce
+    state: latest
+
+- name: Enable Docker service
+  shell: systemctl enable docker.service
+  become: true
